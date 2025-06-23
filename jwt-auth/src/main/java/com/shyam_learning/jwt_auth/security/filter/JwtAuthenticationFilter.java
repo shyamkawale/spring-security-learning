@@ -5,6 +5,7 @@ import com.shyam_learning.jwt_auth.security.JwtUtil;
 import com.shyam_learning.jwt_auth.security.LoginRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.io.IOException;
  * It can be renamed to JwtTokenCreationFilter
  */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    
+
     private final AuthenticationManager authenticationManager;
 
     @Autowired
@@ -42,8 +43,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Authentication authResult = authenticationManager.authenticate(authenticationToken);
 
         if (authResult.isAuthenticated()) {
-            String JwtToken = JwtUtil.generateJwtToken(loginRequest.getUsername(), 15);
+            String JwtToken = JwtUtil.generateJwtToken(loginRequest.getUsername(), 2);
             response.addHeader("Authorization", "Bearer " + JwtToken);
+
+            String refreshToken = JwtUtil.generateJwtToken(loginRequest.getUsername(), 7 * 24 * 60); // 7days
+
+            Cookie cookie = new Cookie("refreshToken", refreshToken);
+            cookie.setMaxAge(7 * 24 * 60 * 60); // 7days
+            cookie.setSecure(true);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/refresh-token");
+            response.addCookie(cookie);
         }
     }
 }

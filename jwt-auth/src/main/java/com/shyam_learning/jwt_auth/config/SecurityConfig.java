@@ -2,6 +2,7 @@ package com.shyam_learning.jwt_auth.config;
 
 import com.shyam_learning.jwt_auth.security.JwtAuthenticationProvider;
 import com.shyam_learning.jwt_auth.security.filter.JwtAuthenticationFilter;
+import com.shyam_learning.jwt_auth.security.filter.JwtRefreshFilter;
 import com.shyam_learning.jwt_auth.security.filter.JwtValidationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -71,7 +72,8 @@ public class SecurityConfig {
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new JwtValidationFilter(authenticationManager), JwtAuthenticationFilter.class);
+                .addFilterAfter(new JwtValidationFilter(authenticationManager), JwtAuthenticationFilter.class)
+                .addFilterAfter(new JwtRefreshFilter(authenticationManager), JwtValidationFilter.class);
 
         return http.build();
     }
