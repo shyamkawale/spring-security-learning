@@ -15,9 +15,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * It can be renamed to JwtTokenCreationFilter
+ */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-
+    
     private final AuthenticationManager authenticationManager;
 
     @Autowired
@@ -40,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Authentication authResult = authenticationManager.authenticate(authenticationToken);
 
         if (authResult.isAuthenticated()) {
-            String JwtToken = JwtUtil.generateJwtToken(loginRequest.getUsername(), 1);
+            String JwtToken = JwtUtil.generateJwtToken(loginRequest.getUsername(), 15);
             response.addHeader("Authorization", "Bearer " + JwtToken);
         }
     }
